@@ -45,6 +45,7 @@ public class DestinationController
           aDestination.setUserID(rs.getInt("userID"));
           destinations.add(aDestination);
         }
+        
         SQL = "select * from destination where destinationTag like " + "'%" + searchString + "%'";
       
         ResultSet rs2 = stmt.executeQuery(SQL);

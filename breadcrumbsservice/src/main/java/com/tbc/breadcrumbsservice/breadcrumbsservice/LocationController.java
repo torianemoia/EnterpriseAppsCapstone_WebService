@@ -27,13 +27,20 @@ public class LocationController {
     List<Location> locations = new ArrayList<>();
       try 
       {
-        
         Connection con = DriverManager.getConnection(connectionURL);
         Statement stmt = con.createStatement();
+        String SQL = "select * from location";
+        ResultSet rs;
 
-        String SQL = "select * from location where locationname like " + "'%" + searchString + "%'";
-        ResultSet rs = stmt.executeQuery(SQL);
+        if (searchString != ""){
 
+          rs = stmt.executeQuery(SQL);
+
+        } else {
+          SQL = "select * from location where locationname like " + "'%" + searchString + "%'";
+          rs = stmt.executeQuery(SQL);
+        }
+            
         while(rs.next()){
           Location aLocation = new Location();
           aLocation.setLocationID(rs.getInt("locationID"));
@@ -50,6 +57,8 @@ public class LocationController {
 
         con.close();
       } 
+
+      
       catch (SQLException e) 
       {
               e.printStackTrace();
