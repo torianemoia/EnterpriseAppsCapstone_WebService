@@ -18,30 +18,42 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class LocationController {
-  
+
   String connectionURL = "jdbc:sqlserver://breadcrumbsserv.database.windows.net:1433;database=breadcrumbs;user=tbcadmin@breadcrumbsserv;password=BreadCrumbs2023!;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
-  @RequestMapping(value = "/location", method=RequestMethod.GET)
-  public ResponseEntity<List<Location>> locationSearch(@RequestParam("searchString") String searchString)
-  {
 
+  @RequestMapping(value = "/location", method = RequestMethod.GET)
+  public ResponseEntity<List<Location>> locationSearch
+  (@RequestParam(value = "searchString", defaultValue = "default") String searchString) {
     List<Location> locations = new ArrayList<>();
-      try 
-      {
-        Connection con = DriverManager.getConnection(connectionURL);
-        Statement stmt = con.createStatement();
-        String SQL = "select * from location";
-        ResultSet rs;
+    
+    try {
+      Connection con = DriverManager.getConnection(connectionURL);
+      Statement stmt = con.createStatement();
+      String SQL = "select * from location";
+      ResultSet rs;
 
-        if (searchString != ""){
+      if (searchString == "default") {
 
-          rs = stmt.executeQuery(SQL);
-
-        } else {
-          SQL = "select * from location where locationname like " + "'%" + searchString + "%'";
-          rs = stmt.executeQuery(SQL);
+        SQL = "select * from destination";
+        rs = stmt.executeQuery(SQL);
+        while (rs.next()) {
+          Location aLocation = new Location();
+          aLocation.setLocationID(rs.getInt("locationID"));
+          aLocation.setLocationName(rs.getString("locationName"));
+          aLocation.setStreetNumber(rs.getInt("streetNumber"));
+          aLocation.setRoadName(rs.getString("roadName"));
+          aLocation.setCity(rs.getString("city"));
+          aLocation.setState(rs.getString("state"));
+          aLocation.setZipCode(rs.getInt("zipCode"));
+          aLocation.setLocationTag(rs.getString("locationTag"));
+          aLocation.setImgID(rs.getInt("imgID"));
+          locations.add(aLocation);
         }
-            
-        while(rs.next()){
+      } else {
+        SQL = "select * from location where locationname like " + "'%" + searchString + "%' or locationtag like " + "'%" + searchString + "%'";
+        rs = stmt.executeQuery(SQL);
+
+        while (rs.next()) {
           Location aLocation = new Location();
           aLocation.setLocationID(rs.getInt("locationID"));
           aLocation.setLocationName(rs.getString("locationName"));
@@ -55,15 +67,12 @@ public class LocationController {
           locations.add(aLocation);
         }
 
-        con.close();
-      } 
-
-      
-      catch (SQLException e) 
-      {
-              e.printStackTrace();
       }
+      con.close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
 
-      return new ResponseEntity<List<Location>>(locations,HttpStatus.OK);
+    return new ResponseEntity<List<Location>>(locations, HttpStatus.OK);
   }
 }
