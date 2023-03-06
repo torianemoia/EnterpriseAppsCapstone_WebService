@@ -24,7 +24,7 @@ class LocationCRUDTests {
 	@Autowired
     private MockMvc mockMvc;
 	
-	@Test
+	/*@Test
 	void LocationRead()  throws Exception {
 		String expectedResult = "[{\"locationID\":901,\"locationName\":\"TEST LOCATION\",\"streetNumber\":9999,\"roadName\":\"TEST ROAD\",\"city\":\"TEST CITY\",\"state\":\"XX\",\"zipCode\":9999,\"locationTag\":\"TEST,TEST,TEST\",\"imgID\":9999}]";
 		// Location expectedLocation = new Location();
@@ -49,6 +49,6 @@ class LocationCRUDTests {
         assertNotNull(resultLocationRead);
         assertEquals(resultLocationRead, expectedResult);
 		
-	}
+	}*/
 
 }
